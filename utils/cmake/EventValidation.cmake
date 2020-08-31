@@ -15,7 +15,7 @@ else()
     option(ESLIB_VALIDATE_BLAME "Include git blame info in event validation errors" ON)
 
     if (ESLIB_VALIDATE_EVENTS)
-        message(STATUS " -- ESLib Event Validation ON")
+        message(STATUS "ESLib Event Validation ON")
 
         # copy event visualization tools to build directory for convenience
         file(COPY
@@ -27,12 +27,12 @@ else()
         endif()
 
         if (ESLIB_VALIDATE_BLAME)
-            message(STATUS " -- ESLib Event Validation will use git blame")
+            message(STATUS "ESLib Event Validation will use git blame")
         else()
-            message(STATUS " -- ESLib Event Validation will not use git blame")
+            message(STATUS "ESLib Event Validation will not use git blame")
         endif()
     else()
-        message(STATUS " -- ESLib Event Validation is DISABLED")
+        message(STATUS "ESLib Event Validation is DISABLED")
     endif()
 
     function(target_link_libraries _target)
@@ -112,7 +112,9 @@ else()
         endif()
     endfunction()
 
-    add_custom_target(map_all_events
+    if (ESLIB_VALIDATE_EVENTS)
+
+      add_custom_target(map_all_events
             COMMAND python "${ESLIB_UTIL_ROOT}/event-scan.py" "${CMAKE_BINARY_DIR}" "${CMAKE_BINARY_DIR}/All_eventdata.json" "${CMAKE_SOURCE_DIR}"
             COMMAND python "${ESLIB_UTIL_ROOT}/event-graph.py" "${CMAKE_BINARY_DIR}/All_eventdata.json" "${CMAKE_BINARY_DIR}/All_eventgraph.json"
             COMMENT "Gathering and mapping event usage for all RCS sources..."
@@ -127,4 +129,7 @@ else()
             DEPENDS map_all_events
             COMMENT "Verifying event usage for all RCS sources..."
             )
+
+	endif (ESLIB_VALIDATE_EVENTS)
+	
 endif()
